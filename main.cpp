@@ -14,19 +14,22 @@ int main(int argc, char* argv[]) {
     HEAP *pHeap = NULL;
     int n = 0;
     char instr[50];
+    int instrCount = 1;  // For numbering output instructions
 
     while(scanf("%s", instr) != EOF) {
+
         if(strcmp(instr, "Stop") == 0) {
-            printf("Instruction: Stop\n");
+            printf("%d: Instruction: Stop\n", instrCount++);
             break;
         }
+
         else if(strcmp(instr, "Read") == 0) {
-            printf("Instruction: Read\n");
+            printf("%d: Instruction: Read\n", instrCount++);
             FILE* infile = fopen(argv[1], "r");
             if(!infile) { fprintf(stderr, "Error: cannot open input file\n"); continue; }
 
             fscanf(infile, "%d", &n);
-            V = (ELEMENT**) malloc((n+1) * sizeof(ELEMENT*));
+            V = (ELEMENT**) malloc((n+1)*sizeof(ELEMENT*));
             for(int i=1; i<=n; i++) {
                 V[i] = (ELEMENT*) malloc(sizeof(ELEMENT));
                 V[i]->index = i;
@@ -38,57 +41,83 @@ int main(int argc, char* argv[]) {
             pHeap = (HEAP*) malloc(sizeof(HEAP));
             pHeap->capacity = n;
             pHeap->size = 0;
-            pHeap->H = (int*) malloc((n+1) * sizeof(int));
+            pHeap->H = (int*) malloc((n+1)*sizeof(int));
         }
+
         else if(strcmp(instr, "PrintArray") == 0) {
-            printf("Instruction: PrintArray\n");
+            printf("%d: Instruction: PrintArray\n", instrCount++);
             if(!V) { fprintf(stderr, "Error: array is NULL\n"); continue; }
             for(int i=1; i<=n; i++)
                 printf("%d %lf %d\n", i, V[i]->key, V[i]->pos);
         }
+
         else if(strcmp(instr, "PrintHeap") == 0) {
-            printf("Instruction: PrintHeap\n");
+            printf("%d: Instruction: PrintHeap\n", instrCount++);
             if(!pHeap) { fprintf(stderr, "Error: heap is NULL\n"); continue; }
             printf("Capacity = %d, size = %d\n", pHeap->capacity, pHeap->size);
             for(int i=1; i<=pHeap->size; i++)
                 printf("H[%d] = %d\n", i, pHeap->H[i]);
         }
+
         else if(strcmp(instr, "BuildHeap") == 0) {
-            printf("Instruction: BuildHeap\n");
+            printf("%d: Instruction: BuildHeap\n", instrCount++);
             pHeap->size = n;
+            for(int i=1; i<=n; i++) pHeap->H[i] = i;
             BuildHeap(pHeap, V);
         }
+
         else if(strncmp(instr, "Insert", 6) == 0) {
             int idx; 
             scanf("%d", &idx);
-            if(idx < 1 || idx > n) { fprintf(stderr, "Error: index out of bound\n"); continue; }
-            if(V[idx]->pos != 0) { fprintf(stderr, "Error: V[index] already in the heap\n"); continue; }
-            printf("Instruction: Insert %d\n", idx);
+            printf("%d: Instruction: Insert %d\n", instrCount++, idx); // Print first
+
+            if(idx < 1 || idx > n) {
+                fprintf(stderr, "Error: index out of bound\n"); 
+                continue;
+            }
+            if(V[idx]->pos != 0) { 
+                fprintf(stderr, "Error: V[index] already in the heap\n"); 
+                continue; 
+            }
+
             Insert(pHeap, V, idx);
+            printf("Element V[%d] inserted into the heap\n", idx);
         }
+
         else if(strcmp(instr, "ExtractMin") == 0) {
-            printf("Instruction: ExtractMin\n");
-            if(!pHeap || pHeap->size == 0) { fprintf(stderr, "Error: heap is empty or NULL\n"); continue; }
+            printf("%d: Instruction: ExtractMin\n", instrCount++);
+            if(!pHeap) { fprintf(stderr, "Error: heap is NULL\n"); continue; }
+            if(pHeap->size == 0) { fprintf(stderr, "Error: heap is empty\n"); continue; }
             ExtractMin(pHeap, V);
         }
+
         else if(strncmp(instr, "DecreaseKey", 11) == 0) {
-            int idx; double newKey;
+            int idx; 
+            double newKey;
             scanf("%d %lf", &idx, &newKey);
-            if(idx < 1 || idx > n || newKey >= V[idx]->key) { fprintf(stderr, "Error: invalid call to DecreaseKey\n"); continue; }
-            if(V[idx]->pos == 0) { fprintf(stderr, "Error: V[index] not in the heap\n"); continue; }
-            printf("Instruction: DecreaseKey %d %lf\n", idx, newKey);
+            printf("%d: Instruction: DecreaseKey %d %lf\n", instrCount++, idx, newKey);
+            if(idx < 1 || idx > n || newKey >= V[idx]->key) { 
+                fprintf(stderr, "Error: invalid call to DecreaseKey\n"); 
+                continue; 
+            }
+            if(V[idx]->pos == 0) { 
+                fprintf(stderr, "Error: V[index] not in the heap\n"); 
+                continue; 
+            }
             DecreaseKey(pHeap, V, idx, newKey);
         }
+
         else if(strcmp(instr, "Write") == 0) {
-            printf("Instruction: Write\n");
+            printf("%d: Instruction: Write\n", instrCount++);
             FILE* outfile = fopen(argv[2], "w");
             if(!outfile) { fprintf(stderr, "Error: cannot open output file\n"); continue; }
             for(int i=1; i<=n; i++)
                 fprintf(outfile, "%d %lf %d\n", i, V[i]->key, V[i]->pos);
             fclose(outfile);
         }
+
         else {
-            printf("Warning: Invalid instruction\n");
+            printf("%d: Warning: Invalid instruction\n", instrCount++);
         }
     }
 
