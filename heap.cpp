@@ -8,11 +8,7 @@ ELEMENT **V = NULL;
 HEAP *pHeap = NULL;
 int n = 0;
 
-int main(int argc, char* argv[]) {
-    if(argc != 3) {
-        fprintf(stderr, "Usage: ./PJ2 <I-File> <O-File>\n<I-File> is the input file\n<O-File> is the output file\n");
-        return 1;
-    }
+
 
     char instr[50];
     while(scanf("%s", instr) != EOF) {
