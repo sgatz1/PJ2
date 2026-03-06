@@ -1,14 +1,9 @@
 #ifndef HEAP_H
 #define HEAP_H
 
-#include "data_structures.h"
+#include "data_structures.h"   // This already defines TAG_HEAP and HEAP
 
-typedef struct TAG_HEAP {
-    int capacity;
-    int size;
-    int *H;       // indices into ELEMENT array
-} HEAP;
-
+// Only declare the functions here, no struct definition
 void BuildHeap(HEAP* pHeap, ELEMENT **V);
 void Insert(HEAP* pHeap, ELEMENT **V, int index);
 void ExtractMin(HEAP* pHeap, ELEMENT **V);
