@@ -105,7 +105,7 @@ int main(int argc, char *argv[])
                 V[i]->pos = i;
             }
 
-            BuildHeap(V,heap);
+            BuildHeap(heap, V);
         }
 
     }
