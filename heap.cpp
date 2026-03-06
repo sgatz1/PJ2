@@ -5,6 +5,16 @@
 
 // BuildHeap: converts array V into a valid min-heap in pHeap
 void BuildHeap(HEAP* pHeap, ELEMENT **V) {
+    // Only elements 1..pHeap->size are in heap
+    for (int i = 1; i <= pHeap->capacity; i++) {
+        V[i]->pos = 0; // reset all positions
+    }
+
+    for (int i = 1; i <= pHeap->size; i++) {
+        pHeap->H[i] = i;
+        V[i]->pos = i;
+    }
+
     for (int i = pHeap->size / 2; i >= 1; i--) {
         int parent = i;
         while (2*parent <= pHeap->size) {
@@ -49,6 +59,8 @@ void Insert(HEAP* pHeap, ELEMENT **V, int index) {
 
         i = i/2;
     }
+
+    printf("Element V[%d] inserted into the heap\n", index); // output required by Gradescope
 }
 
 // ExtractMin: removes the minimum element from the heap
