@@ -1,80 +1,71 @@
 #include <stdio.h>
 #include "heap.h"
 
-void swap(ELEMENT **V, HEAP *heap, int i, int j)
-{
-    int temp = heap->H[i];
-    heap->H[i] = heap->H[j];
-    heap->H[j] = temp;
+void swap(HEAP* pHeap, ELEMENT **V, int i, int j) {
+    int tmp = pHeap->H[i];
+    pHeap->H[i] = pHeap->H[j];
+    pHeap->H[j] = tmp;
 
-    V[heap->H[i]]->pos = i;
-    V[heap->H[j]]->pos = j;
+    // update pos
+    V[pHeap->H[i]]->pos = i;
+    V[pHeap->H[j]]->pos = j;
 }
 
-void heapify(ELEMENT **V, HEAP *heap, int i)
-{
+void MinHeapify(HEAP* pHeap, ELEMENT **V, int i) {
+    int l = 2*i;
+    int r = 2*i + 1;
     int smallest = i;
-    int left = 2*i;
-    int right = 2*i + 1;
 
-    if(left <= heap->size &&
-       V[heap->H[left]]->key < V[heap->H[smallest]]->key)
-        smallest = left;
-
-    if(right <= heap->size &&
-       V[heap->H[right]]->key < V[heap->H[smallest]]->key)
-        smallest = right;
-
-    if(smallest != i)
-    {
-        swap(V, heap, i, smallest);
-        heapify(V, heap, smallest);
+    if (l <= pHeap->size && V[pHeap->H[l]]->key < V[pHeap->H[smallest]]->key)
+        smallest = l;
+    if (r <= pHeap->size && V[pHeap->H[r]]->key < V[pHeap->H[smallest]]->key)
+        smallest = r;
+    if (smallest != i) {
+        swap(pHeap, V, i, smallest);
+        MinHeapify(pHeap, V, smallest);
     }
 }
 
-void buildHeap(ELEMENT **V, HEAP *heap)
-{
-    for(int i = heap->size/2; i >= 1; i--)
-        heapify(V, heap, i);
+void BuildHeap(HEAP* pHeap, ELEMENT **V) {
+    for(int i=1; i<=pHeap->size; i++)
+        V[pHeap->H[i]]->pos = i;
+
+    for(int i=pHeap->size/2; i>=1; i--)
+        MinHeapify(pHeap, V, i);
 }
 
-void insertHeap(ELEMENT **V, HEAP *heap, int index)
-{
-    heap->size++;
-    int i = heap->size;
+void Insert(HEAP* pHeap, ELEMENT **V, int index) {
+    pHeap->size++;
+    pHeap->H[pHeap->size] = index;
+    V[index]->pos = pHeap->size;
 
-    heap->H[i] = index;
-    V[index]->pos = i;
-
-    while(i > 1 &&
-        V[heap->H[i]]->key < V[heap->H[i/2]]->key)
-    {
-        swap(V, heap, i, i/2);
+    // Percolate up
+    int i = pHeap->size;
+    while(i > 1 && V[pHeap->H[i]]->key < V[pHeap->H[i/2]]->key) {
+        swap(pHeap, V, i, i/2);
         i = i/2;
     }
+    printf("Element V[%d] inserted into the heap\n", index);
 }
 
-void extractMin(ELEMENT **V, HEAP *heap)
-{
-    int minIndex = heap->H[1];
-
-    swap(V, heap, 1, heap->size);
-    heap->size--;
-
-    heapify(V, heap, 1);
-
+int ExtractMin(HEAP* pHeap, ELEMENT **V) {
+    if (pHeap->size < 1) return -1;
+    int minIndex = pHeap->H[1];
     V[minIndex]->pos = 0;
+
+    pHeap->H[1] = pHeap->H[pHeap->size];
+    V[pHeap->H[1]]->pos = 1;
+    pHeap->size--;
+    MinHeapify(pHeap, V, 1);
+    return minIndex;
 }
 
-void decreaseKey(ELEMENT **V, HEAP *heap, int index, double newKey)
-{
-    int i = V[index]->pos;
+void DecreaseKey(HEAP* pHeap, ELEMENT **V, int index, double newKey) {
     V[index]->key = newKey;
 
-    while(i > 1 &&
-          V[heap->H[i]]->key < V[heap->H[i/2]]->key)
-    {
-        swap(V, heap, i, i/2);
+    int i = V[index]->pos;
+    while(i > 1 && V[pHeap->H[i]]->key < V[pHeap->H[i/2]]->key) {
+        swap(pHeap, V, i, i/2);
         i = i/2;
     }
 }
