@@ -3,10 +3,10 @@
 
 #include "data_structures.h"
 
-void heapify(ELEMENT **V, HEAP *heap, int i);
-void buildHeap(ELEMENT **V, HEAP *heap);
-void insertHeap(ELEMENT **V, HEAP *heap, int index);
-void extractMin(ELEMENT **V, HEAP *heap);
-void decreaseKey(ELEMENT **V, HEAP *heap, int index, double newKey);
+void MinHeapify(HEAP* pHeap, ELEMENT **V, int i);
+void BuildHeap(HEAP* pHeap, ELEMENT **V);
+void Insert(HEAP* pHeap, ELEMENT **V, int index);
+int ExtractMin(HEAP* pHeap, ELEMENT **V);
+void DecreaseKey(HEAP* pHeap, ELEMENT **V, int index, double newKey);
 
 #endif
