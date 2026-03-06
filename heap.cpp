@@ -3,23 +3,20 @@
 #include "heap.h"
 #include "data_structures.h"
 
-// BuildHeap: converts array V into a valid min-heap in pHeap
+// BuildHeap: convert V into a valid min-heap
 void BuildHeap(HEAP* pHeap, ELEMENT **V) {
-    // Only elements 1..pHeap->size are in heap
-    for (int i = 1; i <= pHeap->capacity; i++) {
-        V[i]->pos = 0; // reset all positions
-    }
+    if(pHeap->size == 0) return;
 
-    for (int i = 1; i <= pHeap->size; i++) {
+    for(int i=1; i<=pHeap->size; i++) {
         pHeap->H[i] = i;
         V[i]->pos = i;
     }
 
-    for (int i = pHeap->size / 2; i >= 1; i--) {
+    for(int i=pHeap->size/2; i>=1; i--) {
         int parent = i;
-        while (2*parent <= pHeap->size) {
+        while(2*parent <= pHeap->size) {
             int left = 2*parent;
-            int right = 2*parent + 1;
+            int right = 2*parent+1;
             int smallest = parent;
 
             if(left <= pHeap->size && V[pHeap->H[left]]->key < V[pHeap->H[smallest]]->key)
@@ -43,12 +40,13 @@ void BuildHeap(HEAP* pHeap, ELEMENT **V) {
 
 // Insert: adds V[index] to the heap
 void Insert(HEAP* pHeap, ELEMENT **V, int index) {
-    pHeap->size++;
-    int i = pHeap->size;
-    pHeap->H[i] = index;
-    V[index]->pos = i;
+    if(index <= 0 || V[index] == NULL) return;
 
-    // Bubble up
+    pHeap->size++;
+    pHeap->H[pHeap->size] = index;
+    V[index]->pos = pHeap->size;
+
+    int i = pHeap->size;
     while(i > 1 && V[pHeap->H[i]]->key < V[pHeap->H[i/2]]->key) {
         int temp = pHeap->H[i];
         pHeap->H[i] = pHeap->H[i/2];
@@ -60,10 +58,10 @@ void Insert(HEAP* pHeap, ELEMENT **V, int index) {
         i = i/2;
     }
 
-    printf("Element V[%d] inserted into the heap\n", index); // output required by Gradescope
+    printf("Element V[%d] inserted into the heap\n", index);
 }
 
-// ExtractMin: removes the minimum element from the heap
+// ExtractMin: remove smallest element
 void ExtractMin(HEAP* pHeap, ELEMENT **V) {
     int minIndex = pHeap->H[1];
     V[minIndex]->pos = 0;
@@ -72,7 +70,6 @@ void ExtractMin(HEAP* pHeap, ELEMENT **V) {
     V[pHeap->H[1]]->pos = 1;
     pHeap->size--;
 
-    // Bubble down
     int i = 1;
     while(2*i <= pHeap->size) {
         int left = 2*i;
@@ -97,12 +94,11 @@ void ExtractMin(HEAP* pHeap, ELEMENT **V) {
     }
 }
 
-// DecreaseKey: lowers the key of V[index] and repositions it
+// DecreaseKey: reduce key and bubble up
 void DecreaseKey(HEAP* pHeap, ELEMENT **V, int index, double newKey) {
     V[index]->key = newKey;
     int i = V[index]->pos;
 
-    // Bubble up
     while(i > 1 && V[pHeap->H[i]]->key < V[pHeap->H[i/2]]->key) {
         int temp = pHeap->H[i];
         pHeap->H[i] = pHeap->H[i/2];
